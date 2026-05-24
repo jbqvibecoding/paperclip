@@ -1,0 +1,27 @@
+schema: paperclip/v1
+agents:
+  ceo:
+    adapter:
+      type: openhuman_local
+      config:
+        # openhuman-core resolves the concrete inference model from its own config.
+        model: inherit
+        agentId: orchestrator
+    inputs:
+      env:
+        OPENHUMAN_CORE_BIN:
+          kind: plain
+          requirement: optional
+          default: openhuman-core
+  builder:
+    adapter:
+      type: openhuman_local
+      config:
+        model: inherit
+        agentId: orchestrator
+    inputs:
+      env:
+        OPENHUMAN_CORE_BIN:
+          kind: plain
+          requirement: optional
+          default: openhuman-core

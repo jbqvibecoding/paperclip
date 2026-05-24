@@ -90,6 +90,17 @@ import {
   models as grokModels,
 } from "@paperclipai/adapter-grok-local";
 import {
+  execute as openhumanExecute,
+  listOpenHumanSkills,
+  syncOpenHumanSkills,
+  testEnvironment as openhumanTestEnvironment,
+  sessionCodec as openhumanSessionCodec,
+} from "@paperclipai/adapter-openhuman-local/server";
+import {
+  agentConfigurationDoc as openhumanAgentConfigurationDoc,
+  models as openhumanModels,
+} from "@paperclipai/adapter-openhuman-local";
+import {
   execute as openCodeExecute,
   listOpenCodeSkills,
   syncOpenCodeSkills,
@@ -381,6 +392,27 @@ const grokLocalAdapter: ServerAdapterModule = {
   agentConfigurationDoc: grokAgentConfigurationDoc,
 };
 
+const openhumanLocalAdapter: ServerAdapterModule = {
+  type: "openhuman_local",
+  execute: openhumanExecute,
+  testEnvironment: openhumanTestEnvironment,
+  listSkills: listOpenHumanSkills,
+  syncSkills: syncOpenHumanSkills,
+  sessionCodec: openhumanSessionCodec,
+  sessionManagement: getAdapterSessionManagement("openhuman_local") ?? undefined,
+  models: openhumanModels,
+  // OpenHuman owns its own skills catalog; Paperclip does not stage skills.
+  supportsLocalAgentJwt: true,
+  supportsInstructionsBundle: false,
+  requiresMaterializedRuntimeSkills: false,
+  getRuntimeCommandSpec: (config) => ({
+    command: readConfiguredCommand(config, "openhuman-core"),
+    detectCommand: readConfiguredCommand(config, "openhuman-core"),
+    installCommand: null,
+  }),
+  agentConfigurationDoc: openhumanAgentConfigurationDoc,
+};
+
 const openclawGatewayAdapter: ServerAdapterModule = {
   type: "openclaw_gateway",
   execute: openclawGatewayExecute,
@@ -519,6 +551,7 @@ function registerBuiltInAdapters() {
     cursorLocalAdapter,
     geminiLocalAdapter,
     grokLocalAdapter,
+    openhumanLocalAdapter,
     openclawGatewayAdapter,
     hermesLocalAdapter,
     processAdapter,
